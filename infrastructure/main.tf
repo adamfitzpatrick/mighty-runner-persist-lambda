@@ -54,6 +54,21 @@ resource "aws_lambda_function" "persist-lambda_function" {
     }
 }
 
+resource "aws_sns_topic_subscription" "persist-lambda_sns_subscription" {
+    topic_arn              = "${var.topic_arn}"
+    protocol               = "lambda"
+    endpoint               = "${aws_lambda_function.persist-lambda_function.arn}"
+    endpoint_auto_confirms = true
+}
+
+resource "aws_lambda_permission" "persist-lambda_sns_permission" {
+    statement_id  = "AllowPersistLambdaExecutionFromSNS"
+    action        = "lambda:InvokeFunction"
+    function_name = "${aws_lambda_function.persist-lambda_function.function_name}"
+    principal     = "sns.amazonaws.com"
+    source_arn    = "${var.topic_arn}"
+}
+
 resource "aws_cloudwatch_log_group" "persist-lambda_function" {
   name              = "/aws/lambda/${aws_lambda_function.persist-lambda_function.function_name}"
   retention_in_days = "${var.cloudwatch_log_retention_in_days}"

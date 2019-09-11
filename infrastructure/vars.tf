@@ -10,6 +10,10 @@ variable "dynamo_table_arn" {
     default     = "*"
 }
 
+variable "topic_arn" {
+    description = "SNS topic ARN to which the lambda subscribes"
+}
+
 variable "table_name" {
     description = "DynamoDB table into which the lambda puts data"
 }
